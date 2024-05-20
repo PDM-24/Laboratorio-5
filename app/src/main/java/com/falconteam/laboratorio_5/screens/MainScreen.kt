@@ -1,4 +1,4 @@
-package com.falconteam.laboratorio_5.ui.screens
+package com.falconteam.laboratorio_5.screens
 
 import androidx.compose.runtime.Composable
 import com.falconteam.laboratorio_5.utils.BlogsitoViewModel
