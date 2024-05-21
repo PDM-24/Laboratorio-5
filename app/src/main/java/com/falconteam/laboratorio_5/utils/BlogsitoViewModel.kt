@@ -4,20 +4,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.falconteam.laboratorio_5.data.database.Entity.Post
+import com.falconteam.laboratorio_5.data.database.InitDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class BlogsitoViewModel : ViewModel() {
-    private var _title by mutableStateOf("Título de muestra")
-    private var _postDescription by mutableStateOf("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean accumsan nec justo non finibus. Morbi venenatis eu nulla ut laoreet. Sed id justo vitae libero maximus interdum. Pellentesque eget ullamcorper nisi. Donec vel tempor nisi. Integer fermentum bibendum blandit. Maecenas eleifend placerat porttitor. Sed erat est, sollicitudin ut ultrices et, cursus et nulla. Duis molestie magna ipsum, sit amet scelerisque libero luctus ut. Sed elit augue, pretium sit amet pellentesque nec, tempor vitae eros.")
+    private val db = InitDatabase.database
+    private val _listPosts = MutableStateFlow<List<Post>>(emptyList())
+    val listPosts = _listPosts.asStateFlow()
+    val showModal = mutableStateOf(false)
+    val newPostTitle = mutableStateOf("")
+    val newPostDescription = mutableStateOf("")
 
-    val title get() = _title
-    val postDescription get() = _postDescription
-
-    fun setTitle(title: String) {
-        _title = title
+    fun showModal() {
+        showModal.value = !showModal.value
     }
 
-    fun setDescription(description: String) {
-        _postDescription = description
+    private fun cleanFields() {
+        newPostDescription.value = ""
+        newPostTitle.value = ""
     }
 
+    fun getAllPosts(){
+        viewModelScope.launch(Dispatchers.IO) {
+            db.postDao().getAllPosts()
+        }
+    }
+    fun insertPost(post: Post){
+        viewModelScope.launch(Dispatchers.IO) {
+            db.postDao().insertPost(post)
+        }
+    }
 }

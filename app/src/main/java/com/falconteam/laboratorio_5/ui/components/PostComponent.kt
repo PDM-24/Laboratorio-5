@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -29,16 +28,21 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.falconteam.laboratorio_5.ui.theme.Laboratorio5Theme
-import com.falconteam.laboratorio_5.utils.BlogsitoViewModel
 
 @Composable
-fun PostComponent(blogsitoViewModel: BlogsitoViewModel) {
+fun PostComponent(
+    id: String,
+    title: String,
+    description: String,
+    author: String,
+    onPostChange: (String, String, String) -> Unit,
+    onDeletePost: () -> Unit
+) {
     var editing by remember { mutableStateOf(false) }
+    var copyTitle by remember { mutableStateOf(title) }
+    var copyDescription by remember { mutableStateOf(description) }
 
     ElevatedCard(
         modifier = Modifier
@@ -63,21 +67,23 @@ fun PostComponent(blogsitoViewModel: BlogsitoViewModel) {
             ) {
                 if (editing) {
                     OutlinedTextField(
-                        value = blogsitoViewModel.title,
-                        onValueChange = { blogsitoViewModel.setTitle(it) }
+                        value = copyTitle,
+                        onValueChange = {
+                            copyTitle = it
+                        }
                     )
                 } else {
                     Text(
                         modifier = Modifier
                             .weight(0.95f),
-                        text = blogsitoViewModel.title,
+                        text = title,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 IconButton(
                     modifier = Modifier,
-                    onClick = { /*TODO*/ },
+                    onClick = { onDeletePost() },
                     colors = IconButtonColors(
                         containerColor = Color.Transparent,
                         contentColor = Color.Black,
@@ -93,11 +99,13 @@ fun PostComponent(blogsitoViewModel: BlogsitoViewModel) {
             }
             if (editing) {
                 OutlinedTextField(
-                    value = blogsitoViewModel.postDescription,
-                    onValueChange = { blogsitoViewModel.setDescription(it) }
+                    value = copyDescription,
+                    onValueChange = {
+                        copyDescription = it
+                    }
                 )
             } else {
-                Text(text = blogsitoViewModel.postDescription)
+                Text(text = description)
             }
             Row(
                 modifier = Modifier
@@ -114,40 +122,55 @@ fun PostComponent(blogsitoViewModel: BlogsitoViewModel) {
                         contentDescription = "User image"
                     )
                     Text(
-                        text = "<Tu nombre>",
+                        text = "<${author}>",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                Text(
-                    modifier = Modifier
-                        .drawBehind {
-                            val strokeWidthPx = 1.dp.toPx()
-                            val verticalOffset = size.height - 2.sp.toPx()
-                            drawLine(
-                                color = Color.Gray,
-                                strokeWidth = strokeWidthPx,
-                                start = Offset(0f, verticalOffset),
-                                end = Offset(size.width, verticalOffset)
-                            )
-                        }
-                        .clickable {
-                            editing = !editing
-                        },
-                    color = MaterialTheme.colorScheme.secondary,
-                    text = "Editar post",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
+                if (!editing) {
+                    Text(
+                        modifier = Modifier
+                            .drawBehind {
+                                val strokeWidthPx = 1.dp.toPx()
+                                val verticalOffset = size.height - 2.sp.toPx()
+                                drawLine(
+                                    color = Color.Gray,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            }
+                            .clickable {
+                                editing = !editing
+                            },
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = "Editar post",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .drawBehind {
+                                val strokeWidthPx = 1.dp.toPx()
+                                val verticalOffset = size.height - 2.sp.toPx()
+                                drawLine(
+                                    color = Color.Gray,
+                                    strokeWidth = strokeWidthPx,
+                                    start = Offset(0f, verticalOffset),
+                                    end = Offset(size.width, verticalOffset)
+                                )
+                            }
+                            .clickable {
+                                onPostChange(copyTitle, copyDescription, id)
+                                editing = !editing
+                            },
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = "Guardar post",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
-    }
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun PostComponentPreview() {
-    val vm: BlogsitoViewModel = viewModel()
-    Laboratorio5Theme {
-        PostComponent(vm)
     }
 }
