@@ -135,15 +135,13 @@ fun MainScreen(
                         ) {
                             items(listPosts.value) {
                                 PostComponent(
-                                    id = it.id.toString(),
+                                    id = it.id,
                                     title = it.title,
                                     description = it.description,
                                     author = it.author,
                                     onPostChange = { title, description, id ->
-
                                     },
                                     onDeletePost = {
-
                                     }
                                 )
                             }

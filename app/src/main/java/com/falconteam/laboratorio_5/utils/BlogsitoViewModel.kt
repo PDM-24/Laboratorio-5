@@ -10,10 +10,10 @@ import com.falconteam.laboratorio_5.data.database.InitDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class BlogsitoViewModel : ViewModel() {
-    private val db = InitDatabase.database
     private val _listPosts = MutableStateFlow<List<Post>>(emptyList())
     val listPosts = _listPosts.asStateFlow()
     val showModal = mutableStateOf(false)
@@ -27,16 +27,5 @@ class BlogsitoViewModel : ViewModel() {
     private fun cleanFields() {
         newPostDescription.value = ""
         newPostTitle.value = ""
-    }
-
-    fun getAllPosts(){
-        viewModelScope.launch(Dispatchers.IO) {
-            db.postDao().getAllPosts()
-        }
-    }
-    fun insertPost(post: Post){
-        viewModelScope.launch(Dispatchers.IO) {
-            db.postDao().insertPost(post)
-        }
     }
 }
