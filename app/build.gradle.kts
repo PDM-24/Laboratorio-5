@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.falconteam.laboratorio_5"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.falconteam.laboratorio_5"
